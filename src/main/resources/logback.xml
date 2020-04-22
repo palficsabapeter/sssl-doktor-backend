@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <if condition='isDefined("LOG_CONSOLE_JSON")'>
+        <then>
+            <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+            </appender>
+        </then>
+        <else>
+            <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+                <encoder>
+                    <pattern>[%-5level] %d{HH:mm:ss.SSS} - %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
+        </else>
+    </if>
+
+    <root level="${ROOT_LOGGING_LEVEL:-INFO}">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <if condition='isDefined("LOG_DIR_JSON")'>
+        <then>
+            <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${LOG_DIR_JSON}\application.json</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_DIR_JSON}\application.%d{yyyy-MM-dd}.json.gz</fileNamePattern>
+                    <maxHistory>7</maxHistory>
+                </rollingPolicy>
+                <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
+            </appender>
+            <root level="${ROOT_LOGGING_LEVEL:-INFO}">
+                <appender-ref ref="FILE"/>
+            </root>
+        </then>
+    </if>
+
+    <if condition='isDefined("LOG_DIR_HUMAN")'>
+        <then>
+            <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+                <file>${LOG_DIR_HUMAN}\application.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                    <fileNamePattern>${LOG_DIR_HUMAN}\application.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
+                    <maxHistory>7</maxHistory>
+                </rollingPolicy>
+                <encoder>
+                    <pattern>[%-5level] %d{HH:mm:ss.SSS} - %logger{36} - %msg%n</pattern>
+                </encoder>
+            </appender>
+            <root level="${ROOT_LOGGING_LEVEL:-INFO}">
+                <appender-ref ref="FILE"/>
+            </root>
+        </then>
+    </if>
+</configuration>
