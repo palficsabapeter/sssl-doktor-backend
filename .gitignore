@@ -1,0 +1,14 @@
+*.class
+*.log
+.env
+ # sbt specific
+.cache/
+.history/
+.lib/
+dist/*
+target/
+ # Scala-IDE specific
+.scala_dependencies
+.idea
+# Default ignored files
+/.idea/workspace.xml
