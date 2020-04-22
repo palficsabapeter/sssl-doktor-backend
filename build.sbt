@@ -58,3 +58,24 @@ addCommandAlias(
   "all scalafmtSbtCheck scalafmtCheck test:scalafmtCheck it:scalafmtCheck",
 )
 addCommandAlias("fmt", "all scalafmtSbt scalafmt test:scalafmt it:scalafmt")
+
+lazy val buildTime                       = java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC)
+lazy val builtAtMillis: SettingKey[Long] = SettingKey[Long]("builtAtMillis", "time of build")
+ThisBuild / builtAtMillis := buildTime.toInstant.toEpochMilli
+lazy val builtAtString: SettingKey[String] = SettingKey[String]("builtAtString", "time of build")
+ThisBuild / builtAtString := buildTime.toString
+
+buildInfoKeys := Seq[BuildInfoKey](
+  name,
+  version,
+  scalaVersion,
+  sbtVersion,
+  BuildInfoKey.action("commitHash") {
+    git.gitHeadCommit.value
+  },
+  builtAtString,
+  builtAtMillis,
+)
+buildInfoPackage := "hu.bme.sch.sssl.doktor"
+
+version := git.gitHeadCommit.value.getOrElse("no_info")
