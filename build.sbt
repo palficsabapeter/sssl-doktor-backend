@@ -11,6 +11,8 @@ libraryDependencies ++= {
   val akkaV     = "2.6.4"
   val jwtV      = "4.3.0"
   val mockitoV  = "1.13.1"
+  val tapirV    = "0.12.24"
+  val circeV    = "0.12.0"
 
   Seq(
     //akka
@@ -38,6 +40,17 @@ libraryDependencies ++= {
     "org.mockito"       %% "mockito-scala"      % mockitoV  % Test,
     "org.mockito"       %% "mockito-scala-cats" % mockitoV  % Test,
     "org.scalatest"     %% "scalatest"          % "3.1.1"   % Test,
+    //tapir
+    "com.softwaremill.sttp.tapir" %% "tapir-core"                 % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"     % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-json-circe"           % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"         % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml"   % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-akka-http" % tapirV,
+    //circe
+    "io.circe" %% "circe-yaml"    % circeV,
+    "io.circe" %% "circe-generic" % circeV,
+    "io.circe" %% "circe-parser"  % circeV,
   )
 }
 

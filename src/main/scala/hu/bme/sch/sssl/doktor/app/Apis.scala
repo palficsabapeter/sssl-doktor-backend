@@ -6,31 +6,42 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
-import hu.bme.sch.sssl.doktor.api.ApiBase
-import hu.bme.sch.sssl.doktor.util.{ApiHandler, LoggerUtil}
+import hu.bme.sch.sssl.doktor.api.HealthCheckApi
+import hu.bme.sch.sssl.doktor.util.{ApiHandler, LoggerUtil, TapirEndpointUtil}
 import org.slf4j.Logger
+import sttp.tapir.server.ServerEndpoint
 
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-class Apis(
+class Apis(services: Services)(
     implicit
     ec: ExecutionContext,
     as: ActorSystem,
 ) {
+  import TapirEndpointUtil._
+  import services._
+
   implicit val logger: Logger = LoggerUtil.getLogger(this.getClass)
 
   def route: Route =
     pathPrefix("api") {
-      val emptyRoute = Route(_.reject())
+      val endpoints: List[ServerEndpoint[_, _, _, Nothing, Future]] = List(
+        new HealthCheckApi().endpoints,
+      ).flatten
 
-      val apis = Seq.empty[ApiBase]
+      val swaggerRoute: Route = {
+        import sttp.tapir.docs.openapi._
+        import sttp.tapir.openapi.circe.yaml._
+        import sttp.tapir.swagger.akkahttp.SwaggerAkka
+
+        val docsAsYaml: String = endpoints.toOpenAPI("SSSL Doktor Backend", "0.1").toYaml
+        new SwaggerAkka(docsAsYaml).routes
+      }
 
       cors() {
-        apis
-          .map(_.route)
-          .fold(emptyRoute)(_ ~ _)
+        TapirEndpointTransformer(endpoints).convertTapirEndpointsToAkkaRoutes ~ swaggerRoute
       }
     }
 
