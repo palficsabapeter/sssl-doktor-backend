@@ -1,0 +1,14 @@
+version: '3.7'
+services:
+  db:
+    image: postgres:9.6.17
+    environment:
+      - POSTGRES_USER=sssl-doktor-backend-dev
+      - POSTGRES_PASSWORD=sssl-doktor-backend-dev
+      - POSTGRES_DB=sssl-doktor-backend-dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:

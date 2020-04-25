@@ -9,8 +9,11 @@ scalaVersion := "2.13.1"
 libraryDependencies ++= {
   val akkaHttpV = "10.1.11"
   val akkaV     = "2.6.4"
+  val slickV    = "3.3.2"
   val jwtV      = "4.3.0"
   val mockitoV  = "1.13.1"
+  val tapirV    = "0.12.24"
+  val circeV    = "0.12.0"
 
   Seq(
     //akka
@@ -18,6 +21,11 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-slf4j"           % akkaV,
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpV,
     "com.typesafe.akka" %% "akka-stream"          % akkaV,
+    //db
+    "com.typesafe.slick" %% "slick"          % slickV,
+    "com.typesafe.slick" %% "slick-hikaricp" % slickV,
+    "org.flywaydb"        % "flyway-core"    % "6.4.0",
+    "org.postgresql"      % "postgresql"     % "42.2.12",
     //jwt
     "com.pauldijou" %% "jwt-core"       % jwtV,
     "com.pauldijou" %% "jwt-spray-json" % jwtV,
@@ -38,11 +46,23 @@ libraryDependencies ++= {
     "org.mockito"       %% "mockito-scala"      % mockitoV  % Test,
     "org.mockito"       %% "mockito-scala-cats" % mockitoV  % Test,
     "org.scalatest"     %% "scalatest"          % "3.1.1"   % Test,
+    //tapir
+    "com.softwaremill.sttp.tapir" %% "tapir-core"                 % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"     % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-json-circe"           % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-openapi-docs"         % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-openapi-circe-yaml"   % tapirV,
+    "com.softwaremill.sttp.tapir" %% "tapir-swagger-ui-akka-http" % tapirV,
+    //circe
+    "io.circe" %% "circe-yaml"    % circeV,
+    "io.circe" %% "circe-generic" % circeV,
+    "io.circe" %% "circe-parser"  % circeV,
   )
 }
 
 enablePlugins(JavaAppPackaging)
 enablePlugins(BuildInfoPlugin)
+enablePlugins(FlywayPlugin)
 
 lazy val root = (project in file("."))
   .configs(ItTest)
