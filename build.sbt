@@ -9,6 +9,7 @@ scalaVersion := "2.13.1"
 libraryDependencies ++= {
   val akkaHttpV = "10.1.11"
   val akkaV     = "2.6.4"
+  val slickV    = "3.3.2"
   val jwtV      = "4.3.0"
   val mockitoV  = "1.13.1"
   val tapirV    = "0.12.24"
@@ -20,6 +21,11 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-slf4j"           % akkaV,
     "com.typesafe.akka" %% "akka-http-spray-json" % akkaHttpV,
     "com.typesafe.akka" %% "akka-stream"          % akkaV,
+    //db
+    "com.typesafe.slick" %% "slick"          % slickV,
+    "com.typesafe.slick" %% "slick-hikaricp" % slickV,
+    "org.flywaydb"        % "flyway-core"    % "6.4.0",
+    "org.postgresql"      % "postgresql"     % "42.2.12",
     //jwt
     "com.pauldijou" %% "jwt-core"       % jwtV,
     "com.pauldijou" %% "jwt-spray-json" % jwtV,
@@ -56,6 +62,7 @@ libraryDependencies ++= {
 
 enablePlugins(JavaAppPackaging)
 enablePlugins(BuildInfoPlugin)
+enablePlugins(FlywayPlugin)
 
 lazy val root = (project in file("."))
   .configs(ItTest)
