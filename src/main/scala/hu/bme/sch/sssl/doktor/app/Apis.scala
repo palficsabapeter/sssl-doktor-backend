@@ -62,7 +62,5 @@ class Apis(services: Services)(
   }
 
   private def setupShutdownHook(server: Http.ServerBinding): Unit =
-    CoordinatedShutdown(as).addTask(CoordinatedShutdown.PhaseServiceUnbind, "http_shutdown") { () =>
-      server.terminate(hardDeadline = 10.seconds).map(_ => Done)
-    }
+    CoordinatedShutdown(as).addTask(CoordinatedShutdown.PhaseServiceUnbind, "http_shutdown")(() => server.terminate(hardDeadline = 10.seconds).map(_ => Done))
 }
