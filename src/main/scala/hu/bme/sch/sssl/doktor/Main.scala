@@ -16,9 +16,10 @@ object Main extends App {
   implicit private val system: ActorSystem                        = ActorSystem("sssl-doktor")
   implicit private val executionContext: ExecutionContextExecutor = system.dispatcher
 
-  private val config   = new Config()
-  private val services = new Services()
-  private val apis     = new Apis(services)
+  private val config       = new Config()
+  private val repositories = new Repositories(config)
+  private val services     = new Services(repositories)
+  private val apis         = new Apis(services)
 
   private lazy val starting = for {
     _      <- Migrator.run(config.migratorConf)
