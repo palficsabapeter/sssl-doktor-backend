@@ -17,8 +17,9 @@ object Main extends App {
   implicit private val executionContext: ExecutionContextExecutor = system.dispatcher
 
   private val config       = new Config()
+  private val auths        = new Auths(config)
   private val repositories = new Repositories(config)
-  private val services     = new Services(repositories)
+  private val services     = new Services(config, repositories, auths)
   private val apis         = new Apis(services)
 
   private lazy val starting = for {

@@ -13,9 +13,9 @@ class JwtService(
 ) {
   import JwtService._
 
-  def encode(uid: String, user: String, email: String, fullname: String, authorities: Seq[Authorities]): String = {
+  def encode(payload: JwtPayload): String = {
     val now = tp.epochSecs
-    val claim = JwtClaim(JwtPayload(uid, user, email, fullname, authorities).toJson.toString)
+    val claim = JwtClaim(payload.toJson.toString)
       .by("https://doktor.sssl.sch.bme.hu")
       .issuedAt(now)
       .expiresAt(now + jwtConf.expirationSecs)
@@ -41,10 +41,9 @@ object JwtService {
       uid: String,
       user: String,
       email: String,
-      fullname: String,
       authorities: Seq[Authorities],
   )
 
   implicit
-  val jwtPayloadFormatter: RootJsonFormat[JwtPayload] = jsonFormat5(JwtPayload)
+  val jwtPayloadFormatter: RootJsonFormat[JwtPayload] = jsonFormat4(JwtPayload)
 }

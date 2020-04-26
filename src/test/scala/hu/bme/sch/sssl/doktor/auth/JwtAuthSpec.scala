@@ -23,7 +23,6 @@ class JwtAuthSpec extends TestBase {
           "userId1",
           "user1",
           "user1@mail.com",
-          "User1 User1",
           Seq(Authorities.Admin, Authorities.Clerk, Authorities.User),
         )
         when(service.validateAndDecode(any[String])).thenReturn(Some(payload))
