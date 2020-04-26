@@ -1,7 +1,10 @@
 package hu.bme.sch.sssl.doktor.util
 
+import akka.http.scaladsl.model.{ContentTypeRange, MediaType, MediaTypes}
 import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
 import hu.bme.sch.sssl.doktor.util.ErrorUtil.{AppError, AuthError}
+import io.circe.Decoder
 import sttp.model.StatusCode
 import sttp.tapir.EndpointIO.Header
 import sttp.tapir.server.{DecodeFailureHandling, ServerDefaults, ServerEndpoint}
@@ -34,5 +37,12 @@ object TapirEndpointUtil {
 
       tapirEndpoints.toRoute
     }
+  }
+
+  final def unmarshaller[A: Decoder]: FromEntityUnmarshaller[A] = {
+    import io.circe.parser.decode
+
+    Unmarshaller.stringUnmarshaller
+      .flatMap(_ => _ => json => decode[A](json).fold(Future.failed, Future.successful))
   }
 }

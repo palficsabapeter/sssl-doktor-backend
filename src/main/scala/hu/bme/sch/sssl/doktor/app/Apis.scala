@@ -6,7 +6,7 @@ import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
-import hu.bme.sch.sssl.doktor.api.HealthCheckApi
+import hu.bme.sch.sssl.doktor.api._
 import hu.bme.sch.sssl.doktor.util.{ApiHandler, LoggerUtil, TapirEndpointUtil}
 import org.slf4j.Logger
 import sttp.tapir.server.ServerEndpoint
@@ -28,8 +28,9 @@ class Apis(services: Services)(
   def route: Route =
     pathPrefix("api") {
       val endpoints: List[ServerEndpoint[_, _, _, Nothing, Future]] = List(
-        new HealthCheckApi().endpoints,
-      ).flatten
+        new HealthCheckApi(),
+        new LoginApi(),
+      ).flatMap(_.endpoints)
 
       val swaggerRoute: Route = {
         import sttp.tapir.docs.openapi._

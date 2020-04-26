@@ -1,0 +1,5 @@
+CREATE TABLE user_auth (
+    id  BIGSERIAL PRIMARY KEY NOT NULL,
+    uid VARCHAR(60) UNIQUE NOT NULL,
+    authorities TEXT NOT NULL
+);

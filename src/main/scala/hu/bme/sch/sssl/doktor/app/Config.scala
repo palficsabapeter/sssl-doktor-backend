@@ -14,6 +14,7 @@ class Config {
   implicit val migratorConf: MigratorConf          = at("postgre.db").loadOrThrow[MigratorConf]
   implicit val dbConf: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("postgre")
   implicit val jwtConf: JwtConf                    = at("jwt").loadOrThrow[JwtConf]
+  implicit val schAuthConf: SchAuthConf            = at("schAuth").loadOrThrow[SchAuthConf]
 }
 
 object Config {
@@ -27,5 +28,13 @@ object Config {
       privateKey: String,
       publicKey: String,
       expirationSecs: Long,
+  )
+
+  case class SchAuthConf(
+      clientId: String,
+      clientSecret: String,
+      tokenEndpoint: String,
+      profileEndpoint: String,
+      memberOf: String,
   )
 }

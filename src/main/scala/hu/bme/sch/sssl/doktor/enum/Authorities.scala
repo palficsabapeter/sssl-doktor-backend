@@ -1,6 +1,6 @@
 package hu.bme.sch.sssl.doktor.`enum`
 
-object Authorities extends CustomEnumeration with SerializableEnumeration {
+object Authorities extends CustomEnumeration with SerializableEnumeration with PersistableEnumeration {
   type Authorities = Value
 
   val Admin: Authorities = Value("ADMIN")

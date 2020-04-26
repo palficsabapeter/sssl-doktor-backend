@@ -15,11 +15,11 @@ class JwtServiceSpec extends TestBase {
     implicit val tp: TimeProvider = mock[TimeProvider]
     val jwtService: JwtService    = new JwtService()
 
-    val uid         = "userId1"
-    val user        = "user1"
-    val email       = "user1@mail.com"
-    val fullname    = "User1 User1"
-    val authorities = Seq(Authorities.Admin, Authorities.Clerk, Authorities.User)
+    val uid                 = "userId1"
+    val user                = "user1"
+    val email               = "user1@mail.com"
+    val authorities         = Seq(Authorities.Admin, Authorities.Clerk, Authorities.User)
+    val payload: JwtPayload = JwtPayload(uid, user, email, authorities)
   }
 
   "JwtService" should {
@@ -29,24 +29,15 @@ class JwtServiceSpec extends TestBase {
         when(tp.epochSecs).thenReturn(epochCreated)
 
         val jwt =
-          "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2Rva3Rvci5zc3NsLnNjaC5ibWUuaHUiLCJleHAiOjE1ODc4NTkyMDAsImlhdCI6MTU4Nzc3MjgwMCwiYXV0aG9yaXRpZXMiOlsiQURNSU4iLCJDTEVSSyIsIlVTRVIiXSwiZW1haWwiOiJ1c2VyMUBtYWlsLmNvbSIsImZ1bGxuYW1lIjoiVXNlcjEgVXNlcjEiLCJ1aWQiOiJ1c2VySWQxIiwidXNlciI6InVzZXIxIn0.Xf1iEle5kc3f6kBH6VFrY6yILX_YFpnYHd8k_O1rSGvLzd9fNvJ4JjdolYY9N_r9ftyZkrophKPSb1te9pcrrRfTi8GcToBQPt4DG87ALMcJKw8aExEUObZBiKikGrfeWK-05iIyh0DONTpWu4eHyI2XEa7d83VuGyh7lCsvZymr7x7xUbgAmEle5aoQnOKVUFBFQtg5RnxkFV9pQbi2u6eILYBm1NTNUH3El_haVOfFEQq6QWvgaK-BMy9TbEy-gXyQIBYc_4kXQuOT5_FR2ePsTxG5DtJl07Ov-ybQPfya6D_hgDGOUmIBbGULrvWMT7K8fn3fte4k-4mo8zD89Q"
-        jwtService.encode(uid, user, email, fullname, authorities) shouldBe jwt
+          "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2Rva3Rvci5zc3NsLnNjaC5ibWUuaHUiLCJleHAiOjE1ODc4NTkyMDAsImlhdCI6MTU4Nzc3MjgwMCwiYXV0aG9yaXRpZXMiOlsiQURNSU4iLCJDTEVSSyIsIlVTRVIiXSwiZW1haWwiOiJ1c2VyMUBtYWlsLmNvbSIsInVpZCI6InVzZXJJZDEiLCJ1c2VyIjoidXNlcjEifQ.lQE8Ix8cEgGoFaGV1sAQvBPaA9M8B5QEbt9TCA1zkebS77CSf1WIkXEpT-HB-39Dz0XJGdAH7BmVPduRhjFcLLWInIobYUq8TXXS4sUnPPDX0WUONNBDj9RVJ2wVHhUkNtu8HY3jpzWEiCYIum7QuAT3BzG8Hiu12Y2UOGKH-v5qwMvkxatsnZ0PiXvGrAFuTzKxHIHwDeDkGkg81Z6_V79vRl5_Lexk3szBZUKKG-RPLnzItWnRzYnChB8dLnIFxOyjpEZyiRlKDr88G0djh6w64NlHllEl5RaJ4DA2502tdfRETeydUty4ZFGgFtV4M7b40cgG75oAO2bqGp7igA"
+        jwtService.encode(payload) shouldBe jwt
       }
     }
 
     "#validateAndDecode" should {
       "validate a valid jwt" in new TestScope {
         when(tp.epochSecs).thenReturn(System.currentTimeMillis() / 1000)
-        val validJwt: String = jwtService.encode(uid, user, email, fullname, authorities)
-
-        val payload: JwtPayload =
-          JwtPayload(
-            uid,
-            user,
-            email,
-            fullname,
-            authorities,
-          )
+        val validJwt: String = jwtService.encode(payload)
 
         jwtService.validateAndDecode(validJwt) shouldBe Some(payload)
       }
@@ -54,7 +45,7 @@ class JwtServiceSpec extends TestBase {
       "NOT validate an expired jwt" in new TestScope {
         val epochCreated: Long = System.currentTimeMillis / 1000 - jwtConf.expirationSecs - 10
         when(tp.epochSecs).thenReturn(epochCreated)
-        val expiredJwt: String = jwtService.encode(uid, user, email, fullname, authorities)
+        val expiredJwt: String = jwtService.encode(payload)
 
         jwtService.validateAndDecode(expiredJwt) shouldBe None
       }

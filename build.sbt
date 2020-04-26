@@ -41,11 +41,12 @@ libraryDependencies ++= {
     "ch.megard"             %% "akka-http-cors"   % "0.4.2",
     "org.scalameta"         %% "scalafmt-dynamic" % "2.5.0-RC1",
     //test
-    "com.typesafe.akka" %% "akka-http-testkit"  % akkaHttpV % Test,
-    "com.typesafe.akka" %% "akka-testkit"       % akkaV     % Test,
-    "org.mockito"       %% "mockito-scala"      % mockitoV  % Test,
-    "org.mockito"       %% "mockito-scala-cats" % mockitoV  % Test,
-    "org.scalatest"     %% "scalatest"          % "3.1.1"   % Test,
+    "com.typesafe.akka"     %% "akka-http-testkit"  % akkaHttpV % Test,
+    "com.typesafe.akka"     %% "akka-testkit"       % akkaV     % Test,
+    "org.mockito"           %% "mockito-scala"      % mockitoV  % Test,
+    "org.mockito"           %% "mockito-scala-cats" % mockitoV  % Test,
+    "org.scalatest"         %% "scalatest"          % "3.1.1"   % Test,
+    "com.github.tomakehurst" % "wiremock"           % "2.25.1"  % Test,
     //tapir
     "com.softwaremill.sttp.tapir" %% "tapir-core"                 % tapirV,
     "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server"     % tapirV,
