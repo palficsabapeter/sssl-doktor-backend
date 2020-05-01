@@ -88,5 +88,23 @@ class TicketRepositorySpec extends RepositoryTestBase {
         })
       }
     }
+
+    "#findByAssignedUserId" should {
+      "return Seq of TicketDbos for uid" in new TestScope {
+        private val newDbo    = dbo.copy(assignedTo = Some("userId1"))
+        private val ticketId2 = UUID.fromString("4f95de93-256d-408c-acda-b19818d7bb3a")
+        private val ticketId3 = UUID.fromString("734980f0-8801-44bc-bcd4-7401f4b25c1f")
+
+        await(for {
+          _       <- repo.upsert(newDbo)
+          _       <- repo.upsert(newDbo.copy(ticketId = ticketId2))
+          _       <- repo.upsert(newDbo.copy(ticketId = ticketId3, assignedTo = None))
+          tickets <- repo.findByAssignedUserId("userId1")
+        } yield {
+          tickets.size shouldBe 2
+          tickets shouldBe Seq(newDbo.copy(id = tickets.head.id), newDbo.copy(ticketId = ticketId2, id = tickets.tail.head.id))
+        })
+      }
+    }
   }
 }

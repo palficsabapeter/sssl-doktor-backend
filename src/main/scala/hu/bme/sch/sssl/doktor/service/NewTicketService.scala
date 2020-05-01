@@ -1,14 +1,13 @@
 package hu.bme.sch.sssl.doktor.service
 
 import cats.data.EitherT
-import cats.implicits._
 import hu.bme.sch.sssl.doktor.api.TicketsApi.CreateTicketDto
 import hu.bme.sch.sssl.doktor.repository.TicketRepository
 import hu.bme.sch.sssl.doktor.repository.TicketRepository.TicketDbo
 import hu.bme.sch.sssl.doktor.util.ErrorUtil.{AppErrorOr, DbActionUnsuccessful}
 import hu.bme.sch.sssl.doktor.util.{TimeProvider, UuidProvider}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class NewTicketService(
     implicit

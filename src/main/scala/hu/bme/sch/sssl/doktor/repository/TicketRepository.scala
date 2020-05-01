@@ -33,6 +33,9 @@ class TicketRepository(
   def findByUserId(uid: String): Future[Seq[TicketDbo]] =
     db.run(tickets.filter(_.uid === uid).result)
 
+  def findByAssignedUserId(uid: String): Future[Seq[TicketDbo]] =
+    db.run(tickets.filter(_.assignedTo.map(_ === uid)).result)
+
   private[repository] class TicketTable(tag: Tag) extends Table[TicketDbo](tag, "tickets") {
     def id: Rep[Long]                   = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def ticketId: Rep[UUID]             = column[UUID]("ticket_id", O.Unique)
