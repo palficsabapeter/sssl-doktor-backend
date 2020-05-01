@@ -1,6 +1,5 @@
 package hu.bme.sch.sssl.doktor.util
 
-import akka.http.scaladsl.model.{ContentTypeRange, MediaType, MediaTypes}
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
 import hu.bme.sch.sssl.doktor.util.ErrorUtil.{AppError, AuthError}
@@ -25,7 +24,7 @@ object TapirEndpointUtil {
           ctx.input match {
             case h: Header[_] if h.name == "Authorization" =>
               DecodeFailureHandling.response(
-                statusCode.and(jsonBody[AppError]),
+                statusCode.and(jsonBody[AuthError]),
               )(
                 (StatusCode.Unauthorized, AuthError("The user is not authenticated!")),
               )

@@ -15,12 +15,13 @@ import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
-class Apis(services: Services)(
+class Apis(auths: Auths, services: Services)(
     implicit
     ec: ExecutionContext,
     as: ActorSystem,
 ) {
   import TapirEndpointUtil._
+  import auths._
   import services._
 
   implicit val logger: Logger = LoggerUtil.getLogger(this.getClass)
@@ -30,6 +31,7 @@ class Apis(services: Services)(
       val endpoints: List[ServerEndpoint[_, _, _, Nothing, Future]] = List(
         new HealthCheckApi(),
         new LoginApi(),
+        new TicketsApi(),
       ).flatMap(_.endpoints)
 
       val swaggerRoute: Route = {

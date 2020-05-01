@@ -11,7 +11,8 @@ object ErrorUtil {
 
   type AppErrorOr[T] = EitherT[Future, AppError, T]
 
-  case class AuthError(message: String)          extends AppError
-  case class DbUnavailable(message: String)      extends AppError
-  case class UnsuccessfulAction(message: String) extends AppError
+  case class AuthError(message: String)            extends AppError
+  case class DbUnavailable(message: String)        extends AppError
+  case class DbActionUnsuccessful(message: String) extends AppError
+  case class UnsuccessfulAction(message: String)   extends AppError
 }

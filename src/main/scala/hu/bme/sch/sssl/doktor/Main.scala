@@ -20,7 +20,7 @@ object Main extends App {
   private val auths        = new Auths(config)
   private val repositories = new Repositories(config)
   private val services     = new Services(config, repositories, auths)
-  private val apis         = new Apis(services)
+  private val apis         = new Apis(auths, services)
 
   private lazy val starting = for {
     _      <- Migrator.run(config.migratorConf)

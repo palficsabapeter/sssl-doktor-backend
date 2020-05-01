@@ -18,18 +18,20 @@ class JwtAuth(
       ec: ExecutionContext,
   ): AppErrorOr[JwtPayload] =
     EitherT.fromEither[Future](service.validateAndDecode(token).toRight(AuthError("Invalid JWT token!")))
+}
 
+object JwtAuth {
   implicit class AuthEitherTHelper(decoded: AppErrorOr[JwtPayload]) {
     def withoutPayload[A](onErrorStatus: String => AppError)(block: => AppErrorOr[A])(
         implicit
         executionContext: ExecutionContext,
     ): AppErrorOr[A] =
-      withPayload(onErrorStatus)(_ => block)
+      withPayload(_ => block)
 
-    def withPayload[A](onErrorStatus: String => AppError)(block: JwtPayload => AppErrorOr[A])(
+    def withPayload[A](block: JwtPayload => AppErrorOr[A])(
         implicit
         executionContext: ExecutionContext,
     ): AppErrorOr[A] =
-      decoded.flatMap(pl => block(pl).leftMap(err => onErrorStatus(err.message)))
+      decoded.flatMap(pl => block(pl))
   }
 }
