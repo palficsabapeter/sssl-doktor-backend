@@ -20,4 +20,5 @@ class Services(config: Config, repositories: Repositories, auths: Auths)(
   implicit val healthCheckService: HealthCheckService = new HealthCheckService()
   implicit val loginService: LoginService             = new LoginService()
   implicit val newTicketService: NewTicketService     = new NewTicketService()
+  implicit val myTicketsService: MyTicketsService     = new MyTicketsService()
 }
