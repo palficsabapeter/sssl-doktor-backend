@@ -3,8 +3,8 @@ package hu.bme.sch.sssl.doktor.api
 import cats.implicits._
 import hu.bme.sch.sssl.doktor.util.ErrorUtil._
 import sttp.model.StatusCode
+import sttp.tapir._
 import sttp.tapir.server.ServerEndpoint
-import sttp.tapir.{jsonBody, oneOf, statusMapping, Endpoint}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -28,6 +28,7 @@ trait ApiBase {
         oneOf[AppError](
           statusMapping(StatusCode.Unauthorized, jsonBody[AuthError].description("Unauthorized!")),
           statusMapping(StatusCode.ServiceUnavailable, jsonBody[DbUnavailable].description("Database unavailable!")),
+          statusMapping(StatusCode.InternalServerError, jsonBody[DbActionUnsuccessful].description("Database action was unsuccessful!")),
           statusMapping(StatusCode.BadRequest, jsonBody[UnsuccessfulAction].description("Unsuccessful action!")),
         ),
       )
