@@ -30,6 +30,7 @@ trait ApiBase {
           statusMapping(StatusCode.ServiceUnavailable, jsonBody[DbUnavailable].description("Database unavailable!")),
           statusMapping(StatusCode.InternalServerError, jsonBody[DbActionUnsuccessful].description("Database action was unsuccessful!")),
           statusMapping(StatusCode.BadRequest, jsonBody[UnsuccessfulAction].description("Unsuccessful action!")),
+          statusMapping(StatusCode.NotFound, jsonBody[TicketNotFound].description("Ticket not found!")),
         ),
       )
   }

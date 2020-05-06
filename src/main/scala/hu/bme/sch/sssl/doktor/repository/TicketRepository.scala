@@ -20,7 +20,7 @@ class TicketRepository(
   def upsert(dbo: TicketDbo): Future[Int] = {
     val upsertQuery = for {
       existing <- tickets.filter(_.ticketId === dbo.ticketId).result.headOption
-      row       = existing.map(_.copy(description = dbo.description, assignedTo = dbo.assignedTo)).getOrElse(dbo)
+      row       = existing.map(_.copy(description = dbo.description, assignedTo = dbo.assignedTo, isActive = dbo.isActive)).getOrElse(dbo)
       result   <- tickets.insertOrUpdate(row)
     } yield result
 
