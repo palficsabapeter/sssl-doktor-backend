@@ -1,0 +1,2 @@
+ALTER TABLE tickets
+    ADD COLUMN is_active BOOLEAN NOT NULL;

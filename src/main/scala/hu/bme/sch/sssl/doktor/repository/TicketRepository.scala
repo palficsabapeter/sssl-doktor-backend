@@ -36,6 +36,12 @@ class TicketRepository(
   def findByAssignedUserId(uid: String): Future[Seq[TicketDbo]] =
     db.run(tickets.filter(_.assignedTo.map(_ === uid)).result)
 
+  def listAllWithStatusFilter(isActive: Option[Boolean]): Future[Seq[TicketDbo]] =
+    if (isActive.isDefined)
+      db.run(tickets.filter(_.isActive === isActive.getOrElse(true)).result)
+    else
+      db.run(tickets.result)
+
   private[repository] class TicketTable(tag: Tag) extends Table[TicketDbo](tag, "tickets") {
     def id: Rep[Long]                   = column[Long]("id", O.PrimaryKey, O.AutoInc)
     def ticketId: Rep[UUID]             = column[UUID]("ticket_id", O.Unique)
@@ -46,6 +52,7 @@ class TicketRepository(
     def isAnonym: Rep[Boolean]          = column[Boolean]("is_anonym")
     def description: Rep[String]        = column[String]("description")
     def assignedTo: Rep[Option[String]] = column[Option[String]]("assigned_to")
+    def isActive: Rep[Boolean]          = column[Boolean]("is_active")
 
     override def * : ProvenShape[TicketDbo] =
       (
@@ -57,6 +64,7 @@ class TicketRepository(
         isAnonym,
         description,
         assignedTo,
+        isActive,
         id,
       ) <> (TicketDbo.tupled, TicketDbo.unapply)
   }
@@ -72,6 +80,7 @@ object TicketRepository {
       isAnonym: Boolean,
       description: String,
       assignedTo: Option[String],
+      isActive: Boolean = true,
       id: Long = 0L,
   )
 }

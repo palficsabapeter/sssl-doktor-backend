@@ -31,6 +31,9 @@ object MyTicketsService {
       createdBy: Option[String],
       ticketType: TicketType,
       assignedTo: Option[String],
+      isActive: Boolean,
+      unansweredMessages: Seq[UUID],
+      unreviewedMessages: Seq[UUID],
   )
 
   case class MyTicketsResponseDto(

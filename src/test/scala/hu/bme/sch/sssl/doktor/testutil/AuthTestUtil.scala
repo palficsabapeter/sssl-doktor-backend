@@ -21,4 +21,6 @@ trait AuthTestUtil {
   val authorities = Seq(Authorities.Admin, Authorities.Clerk, Authorities.User)
   val payload     = JwtPayload(uid, user, email, authorities)
   val validToken  = jwtService.encode(payload)
+
+  val validTokenWithUserAuth = jwtService.encode(payload.copy(authorities = Seq(Authorities.User)))
 }

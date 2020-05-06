@@ -32,6 +32,9 @@ class MyTicketsServiceSpec extends TestBase {
       Some("User1"),
       TicketType.Misc,
       None,
+      true,
+      Seq.empty[UUID],
+      Seq.empty[UUID],
     )
 
     val dbosRegisteredByMe = Seq(
