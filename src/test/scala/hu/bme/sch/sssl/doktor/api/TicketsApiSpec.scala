@@ -8,8 +8,9 @@ import akka.http.scaladsl.server.Route
 import cats.implicits._
 import hu.bme.sch.sssl.doktor.`enum`.TicketType
 import hu.bme.sch.sssl.doktor.api.TicketsApi.CreateTicketDto
+import hu.bme.sch.sssl.doktor.service.AllTicketsService.AllTicketsResponseDto
 import hu.bme.sch.sssl.doktor.service.MyTicketsService.{MyTicketsResponseDto, TicketOverviewDto}
-import hu.bme.sch.sssl.doktor.service.{MyTicketsService, NewTicketService}
+import hu.bme.sch.sssl.doktor.service.{AllTicketsService, MyTicketsService, NewTicketService}
 import hu.bme.sch.sssl.doktor.testutil.{ApiTestBase, AuthTestUtil}
 import hu.bme.sch.sssl.doktor.util.ErrorUtil.{AuthError, DbActionUnsuccessful}
 
@@ -20,8 +21,9 @@ class TicketsApiSpec extends ApiTestBase with AuthTestUtil {
   import io.circe.syntax._
 
   trait TestScope {
-    implicit val newTicketService: NewTicketService = mock[NewTicketService]
-    implicit val myTicketsService: MyTicketsService = mock[MyTicketsService]
+    implicit val newTicketService: NewTicketService   = mock[NewTicketService]
+    implicit val myTicketsService: MyTicketsService   = mock[MyTicketsService]
+    implicit val allTicketsService: AllTicketsService = mock[AllTicketsService]
 
     val api: TicketsApi = new TicketsApi()
 
@@ -101,15 +103,21 @@ class TicketsApiSpec extends ApiTestBase with AuthTestUtil {
             Some(user),
             TicketType.AdviceRequest,
             Some(s"userId$i"),
+            true,
+            Seq.empty[UUID],
+            Seq.empty[UUID],
           ),
           for {
-            i <- 1 to 10
+            _ <- 1 to 10
           } yield TicketOverviewDto(
             UUID.randomUUID(),
             0L,
             None,
             TicketType.FeedbackRequest,
             Some(user),
+            true,
+            Seq.empty[UUID],
+            Seq.empty[UUID],
           ),
         )
         whenF(myTicketsService.getMyTickets(any[String])).thenReturn(response)
@@ -141,6 +149,86 @@ class TicketsApiSpec extends ApiTestBase with AuthTestUtil {
         }
 
         verify(myTicketsService, times(0)).getMyTickets(any[String])
+      }
+    }
+
+    "GET /tickets/all" should {
+      "return list of tickets" in new TestScope {
+        private val dtos = for {
+          i <- 1 to 10
+        } yield TicketOverviewDto(
+          UUID.randomUUID(),
+          0L,
+          Some(s"User$i"),
+          TicketType.Misc,
+          None,
+          true,
+          Seq.empty[UUID],
+          Seq.empty[UUID],
+        )
+        whenF(allTicketsService.getAllTickets(any[Option[Boolean]])).thenReturn(AllTicketsResponseDto(dtos))
+
+        Get("/tickets/all?status=true") ~> addCredentials(OAuth2BearerToken(validToken)) ~> route ~> check {
+          status shouldBe StatusCodes.OK
+          implicit val decoder: Decoder[AllTicketsResponseDto] = deriveDecoder
+          responseShouldBeDto[AllTicketsResponseDto](AllTicketsResponseDto(dtos))
+        }
+
+        verify(allTicketsService, times(1)).getAllTickets(Some(true))
+      }
+
+      "return list of tickets without filtering" in new TestScope {
+        private val dtos = for {
+          i <- 1 to 10
+        } yield TicketOverviewDto(
+          UUID.randomUUID(),
+          0L,
+          Some(s"User$i"),
+          TicketType.Misc,
+          None,
+          if (i % 2 == 0) true else false,
+          Seq.empty[UUID],
+          Seq.empty[UUID],
+        )
+        whenF(allTicketsService.getAllTickets(any[Option[Boolean]])).thenReturn(AllTicketsResponseDto(dtos))
+
+        Get("/tickets/all") ~> addCredentials(OAuth2BearerToken(validToken)) ~> route ~> check {
+          status shouldBe StatusCodes.OK
+          implicit val decoder: Decoder[AllTicketsResponseDto] = deriveDecoder
+          responseShouldBeDto[AllTicketsResponseDto](AllTicketsResponseDto(dtos))
+        }
+
+        verify(allTicketsService, times(1)).getAllTickets(None)
+      }
+
+      "return Unauthorized if the given credentials did not contain Clerk authorities" in new TestScope {
+        Get("/tickets/all") ~> addCredentials(OAuth2BearerToken(validTokenWithUserAuth)) ~> route ~> check {
+          status shouldBe StatusCodes.Unauthorized
+          implicit val decoder: Decoder[AuthError] = deriveDecoder
+          responseShouldBeDto[AuthError](AuthError("No sufficient authorities!"))
+        }
+
+        verify(allTicketsService, times(0)).getAllTickets(any[Option[Boolean]])
+      }
+
+      "return Unauthorized if there were no credentials provided" in new TestScope {
+        Get("/tickets/all") ~> route ~> check {
+          status shouldBe StatusCodes.Unauthorized
+          implicit val decoder: Decoder[AuthError] = deriveDecoder
+          responseShouldBeDto[AuthError](AuthError("The user is not authenticated!"))
+        }
+
+        verify(allTicketsService, times(0)).getAllTickets(any[Option[Boolean]])
+      }
+
+      "return Unauthorized if there were invalid credentials provided" in new TestScope {
+        Get("/tickets/all") ~> addCredentials(OAuth2BearerToken("in.valid.token")) ~> route ~> check {
+          status shouldBe StatusCodes.Unauthorized
+          implicit val decoder: Decoder[AuthError] = deriveDecoder
+          responseShouldBeDto[AuthError](AuthError("Invalid JWT token!"))
+        }
+
+        verify(allTicketsService, times(0)).getAllTickets(any[Option[Boolean]])
       }
     }
   }
