@@ -15,7 +15,7 @@ class MyTicketsServiceSpec extends TestBase {
 
     val service: MyTicketsService = new MyTicketsService()
 
-    val dbo = TicketDbo(
+    val dbo: TicketDbo = TicketDbo(
       UUID.fromString("9e779c50-a0a0-40c4-944e-1b3a57132dab"),
       "userId1",
       "User1",
@@ -26,7 +26,7 @@ class MyTicketsServiceSpec extends TestBase {
       None,
     )
 
-    val dto = TicketOverviewDto(
+    val dto: TicketOverviewDto = TicketOverviewDto(
       UUID.fromString("9e779c50-a0a0-40c4-944e-1b3a57132dab"),
       0L,
       Some("User1"),
@@ -46,7 +46,7 @@ class MyTicketsServiceSpec extends TestBase {
       ),
     )
 
-    val dtosRegisteredByMe = Seq(
+    val dtosRegisteredByMe: Seq[TicketOverviewDto] = Seq(
       dto,
       dto.copy(
         ticketId = UUID.fromString("38ec63aa-594c-45e0-840c-2cdd1dac2f64"),
@@ -55,7 +55,7 @@ class MyTicketsServiceSpec extends TestBase {
       ),
     )
 
-    val dbosAssignedToMe = Seq(
+    val dbosAssignedToMe: Seq[TicketDbo] = Seq(
       dbo.copy(
         ticketId = UUID.fromString("9bb42b78-61b6-4132-bb78-3718a6861959"),
         uid = "userId2",
@@ -71,7 +71,7 @@ class MyTicketsServiceSpec extends TestBase {
       ),
     )
 
-    val dtosAssignedToMe = Seq(
+    val dtosAssignedToMe: Seq[TicketOverviewDto] = Seq(
       dto.copy(
         ticketId = UUID.fromString("9bb42b78-61b6-4132-bb78-3718a6861959"),
         createdBy = Some("User2"),

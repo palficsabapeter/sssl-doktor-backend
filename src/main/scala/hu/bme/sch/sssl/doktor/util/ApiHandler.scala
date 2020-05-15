@@ -3,6 +3,7 @@ package hu.bme.sch.sssl.doktor.util
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpResponse, StatusCodes}
 import akka.http.scaladsl.server.Directives.{complete, extractUri}
 import akka.http.scaladsl.server.{ExceptionHandler, RejectionHandler}
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import hu.bme.sch.sssl.doktor.util.ErrorUtil._
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -17,7 +18,9 @@ object ApiHandler {
       case exception =>
         extractUri { uri =>
           logger.warn(s"Request to $uri could not be handled normally!", exception)
-          complete(HttpResponse(StatusCodes.InternalServerError))
+          cors() {
+            complete(HttpResponse(StatusCodes.InternalServerError))
+          }
         }
     }
 
@@ -26,7 +29,7 @@ object ApiHandler {
     * https://doc.akka.io/docs/akka-http/current/routing-dsl/rejections.html#customising-rejection-http-responses
     */
   implicit def rejectionHandler: RejectionHandler =
-    RejectionHandler.default
+    corsRejectionHandler
       .mapRejectionResponse {
         case res @ HttpResponse(_, _, ent: HttpEntity.Strict, _) =>
           // since all Akka default rejection responses are Strict this will handle all rejections
