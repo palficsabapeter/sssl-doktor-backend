@@ -16,7 +16,7 @@ class AllTicketsServiceSpec extends TestBase {
 
     val service: AllTicketsService = new AllTicketsService()
 
-    val dbos = for {
+    val dbos: Seq[TicketDbo] = for {
       i <- 1 to 20
     } yield TicketDbo(
       UUID.fromString("9e779c50-a0a0-40c4-944e-1b3a57132dab"),
@@ -30,7 +30,7 @@ class AllTicketsServiceSpec extends TestBase {
       if (i % 2 == 0) true else false,
     )
 
-    val dtos = for {
+    val dtos: Seq[TicketOverviewDto] = for {
       i <- 1 to 20
     } yield TicketOverviewDto(
       UUID.fromString("9e779c50-a0a0-40c4-944e-1b3a57132dab"),

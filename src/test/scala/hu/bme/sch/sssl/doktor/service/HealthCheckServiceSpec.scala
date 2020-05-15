@@ -17,14 +17,6 @@ class HealthCheckServiceSpec extends TestBase {
   "HealthCheckService" should {
     "#checkStatus" should {
       "return a HealthCheckDto if DB check was successful" in new TestScope {
-        private val dto = HealthCheckDto(
-          true,
-          "0.1",
-          "builtAtString",
-          0L,
-          Some("commitHash"),
-        )
-
         when(repo.checkStatus).thenReturn(Future.successful(true))
 
         await(service.checkStatus.value) shouldBe a[Right[_, HealthCheckDto]]

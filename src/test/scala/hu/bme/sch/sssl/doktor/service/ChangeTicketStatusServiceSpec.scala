@@ -15,7 +15,7 @@ class ChangeTicketStatusServiceSpec extends TestBase {
 
     val service: ChangeTicketStatusService = new ChangeTicketStatusService()
 
-    val dbo = TicketDbo(
+    val dbo: TicketDbo = TicketDbo(
       UUID.randomUUID(),
       "userId1",
       "User1",
@@ -49,7 +49,7 @@ class ChangeTicketStatusServiceSpec extends TestBase {
         verify(repo, times(1)).upsert(dbo.copy(isActive = false))
       }
 
-      "return a TicketNotFound if there was no ticket was found for provided id" in new TestScope {
+      "return a TicketNotFound if there was no ticket found for provided id" in new TestScope {
         whenF(repo.findById(any[UUID])).thenReturn(None)
 
         await(service.changeTicketStatus(dbo.ticketId, false).value) shouldBe
