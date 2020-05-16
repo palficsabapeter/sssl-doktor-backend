@@ -10,7 +10,7 @@ import slick.jdbc.PostgresProfile.api._
 import scala.concurrent.Future
 
 class TicketRepositorySpec extends RepositoryTestBase {
-  override def cleanDb(): Future[_] = db.run(sqlu"""TRUNCATE tickets""")
+  override def cleanDb(): Future[_] = db.run(sqlu"""TRUNCATE tickets CASCADE""")
 
   trait TestScope {
     val repo: TicketRepository = new TicketRepository()
