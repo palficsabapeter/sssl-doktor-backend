@@ -141,12 +141,14 @@ class MessageRepositorySpec extends RepositoryTestBase {
           insert  <- messageRepo.upsert(message)
           insert2 <- messageRepo.upsert(message2)
           insert3 <- messageRepo.upsert(message3)
+          all     <- db.run(messageRepo.messages.result)
           found   <- messageRepo.findByTicketId(ticketId)
         } yield {
           init.size shouldBe 0
           insert shouldBe 1
           insert2 shouldBe 1
           insert3 shouldBe 1
+          all.size shouldBe 3
           found.size shouldBe 2
           found.head shouldBe message.copy(id = found.head.id)
           found.last shouldBe message2.copy(id = found.last.id)
