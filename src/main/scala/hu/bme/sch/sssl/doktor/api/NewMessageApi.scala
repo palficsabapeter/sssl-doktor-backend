@@ -6,15 +6,16 @@ import cats.implicits._
 import hu.bme.sch.sssl.doktor.`enum`.{Authorities, MessageStatus}
 import hu.bme.sch.sssl.doktor.api.ApiBase.EmptyResponseBody
 import hu.bme.sch.sssl.doktor.auth.JwtAuth
-import hu.bme.sch.sssl.doktor.service.NewMessageService
 import hu.bme.sch.sssl.doktor.service.NewMessageService.CreateMessageDto
+import hu.bme.sch.sssl.doktor.service.{NewMessageService, TicketDetailsService}
 
 import scala.concurrent.ExecutionContext
 
 class NewMessageApi(
     implicit
     jwtAuth: JwtAuth,
-    service: NewMessageService,
+    newMessageService: NewMessageService,
+    ticketDetailsService: TicketDetailsService,
     ec: ExecutionContext,
 ) extends ApiBase {
   import JwtAuth._
@@ -43,7 +44,7 @@ class NewMessageApi(
               val auths     = jwt.authorities
               val createDto = CreateMessageDto(ticketId, jwt.uid, jwt.user, MessageStatus.Shown, message.message)
               if (auths.contains(Authorities.Admin))
-                service.createMessage(createDto)
+                newMessageService.createMessage(createDto)
               else if (auths.contains(Authorities.Clerk))
                 ifCreatedByThenCreate(createDto, ticketId, jwt.uid).leftFlatMap { _ =>
                   // so the clerks can create messages to tickets created by them and assigned to them
@@ -58,14 +59,14 @@ class NewMessageApi(
 
   private def ifAssignedToThenCreate(dto: CreateMessageDto, ticketId: UUID, uid: String) =
     for {
-      _   <- service.isAssignedToUid(ticketId, uid)
-      res <- service.createMessage(dto.copy(status = MessageStatus.Unreviewed))
+      _   <- ticketDetailsService.isAssignedToUid(ticketId, uid)
+      res <- newMessageService.createMessage(dto.copy(status = MessageStatus.Unreviewed))
     } yield res
 
   private def ifCreatedByThenCreate(dto: CreateMessageDto, ticketId: UUID, uid: String) =
     for {
-      _   <- service.isCreatedByUid(ticketId, uid)
-      res <- service.createMessage(dto)
+      _   <- ticketDetailsService.isCreatedByUid(ticketId, uid)
+      res <- newMessageService.createMessage(dto)
     } yield res
 }
 

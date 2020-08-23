@@ -30,21 +30,7 @@ class NewMessageService(
     } yield res
   }
 
-  def isCreatedByUid(ticketId: UUID, uid: String): AppErrorOr[Unit] =
-    for {
-      ticket <- EitherT.fromOptionF(ticketRepo.findById(ticketId), noTicketFoundError(ticketId))
-      res    <- EitherT.cond[Future](ticket.uid == uid, {}, insufficientAuthError(uid))
-    } yield res
-
-  def isAssignedToUid(ticketId: UUID, uid: String): AppErrorOr[Unit] =
-    for {
-      ticket   <- EitherT.fromOptionF(ticketRepo.findById(ticketId), noTicketFoundError(ticketId))
-      assigned <- EitherT.fromOption[Future](ticket.assignedTo, insufficientAuthError(uid))
-      res      <- EitherT.cond[Future](assigned == uid, {}, insufficientAuthError(uid))
-    } yield res
-
   private def noTicketFoundError(ticketId: UUID): AppError = TicketNotFound(s"There was no ticket with id `$ticketId` found!")
-  private def insufficientAuthError(uid: String): AppError = AuthError(s"User with id `$uid` is not an authorized personnel!")
 }
 
 object NewMessageService {
