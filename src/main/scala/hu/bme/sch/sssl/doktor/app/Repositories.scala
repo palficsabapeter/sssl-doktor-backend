@@ -13,4 +13,5 @@ class Repositories(config: Config)(
   implicit val healthCheckRepository: HealthCheckRepository = new HealthCheckRepository()
   implicit val authRepository: AuthRepository               = new AuthRepository()
   implicit val ticketRepository: TicketRepository           = new TicketRepository()
+  implicit val messageRepository: MessageRepository         = new MessageRepository()
 }

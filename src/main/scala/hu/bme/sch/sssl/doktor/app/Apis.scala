@@ -32,6 +32,9 @@ class Apis(auths: Auths, services: Services)(
         new HealthCheckApi(),
         new LoginApi(),
         new TicketsApi(),
+        new TicketApi(),
+        new AssignTicketApi(),
+        new NewMessageApi(),
       ).flatMap(_.endpoints)
 
       val swaggerRoute: Route = {

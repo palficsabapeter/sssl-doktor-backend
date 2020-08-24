@@ -40,6 +40,7 @@ libraryDependencies ++= {
     "org.typelevel"         %% "cats-core"        % "2.1.1",
     "ch.megard"             %% "akka-http-cors"   % "0.4.2",
     "org.scalameta"         %% "scalafmt-dynamic" % "2.5.0-RC1",
+    "com.osinka.i18n"       %% "scala-i18n"       % "1.0.3",
     //test
     "com.typesafe.akka"     %% "akka-http-testkit"  % akkaHttpV % Test,
     "com.typesafe.akka"     %% "akka-testkit"       % akkaV     % Test,

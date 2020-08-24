@@ -15,6 +15,7 @@ class Config {
   implicit val dbConf: DatabaseConfig[JdbcProfile] = DatabaseConfig.forConfig("postgre")
   implicit val jwtConf: JwtConf                    = at("jwt").loadOrThrow[JwtConf]
   implicit val schAuthConf: SchAuthConf            = at("schAuth").loadOrThrow[SchAuthConf]
+  implicit val langConf: LangConf                  = at("lang").loadOrThrow[LangConf]
 }
 
 object Config {
@@ -36,5 +37,9 @@ object Config {
       tokenEndpoint: String,
       profileEndpoint: String,
       memberOf: String,
+  )
+
+  case class LangConf(
+      locale: String,
   )
 }
