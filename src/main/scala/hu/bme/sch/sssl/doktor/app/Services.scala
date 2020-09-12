@@ -26,4 +26,5 @@ class Services(config: Config, repositories: Repositories, auths: Auths)(
   implicit val ticketDetailsService: TicketDetailsService           = new TicketDetailsService()
   implicit val assignTicketService: AssignTicketService             = new AssignTicketService()
   implicit val newMessageService: NewMessageService                 = new NewMessageService()
+  implicit val approveMessageService: ApproveMessageService         = new ApproveMessageService
 }
