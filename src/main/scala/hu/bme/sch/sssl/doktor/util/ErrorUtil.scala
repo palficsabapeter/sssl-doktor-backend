@@ -16,4 +16,5 @@ object ErrorUtil {
   case class DbActionUnsuccessful(message: String) extends AppError
   case class UnsuccessfulAction(message: String)   extends AppError
   case class TicketNotFound(message: String)       extends AppError
+  case class MessageNotFound(message: String)      extends AppError
 }

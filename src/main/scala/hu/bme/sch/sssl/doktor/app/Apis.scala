@@ -35,6 +35,7 @@ class Apis(auths: Auths, services: Services)(
         new TicketApi(),
         new AssignTicketApi(),
         new NewMessageApi(),
+        new ApproveMessageApi(),
       ).flatMap(_.endpoints)
 
       val swaggerRoute: Route = {
